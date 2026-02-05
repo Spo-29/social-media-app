@@ -30,5 +30,3 @@ app.listen(8800, async () => {
     console.error("Query failed:", err);
   }
 });
-
-// yarn add express mssql msnodesqlv8 nodemon
