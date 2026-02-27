@@ -1,32 +1,52 @@
-import Express from "express";
+import express from "express";
 import { db } from "./connect.js";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import authRoutes from "./routes/auth.js";
+import userRoutes from "./routes/users.js";
+import postRoutes from "./routes/posts.js";
+import commentRoutes from "./routes/comments.js";
+import likeRoutes from "./routes/likes.js";
 
-const app = Express();
+const app = express();
+
+//middlewares
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Credentials", true);
+  next();
+});
+app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  }),
+);
+app.use(cookieParser());
+
+// LOGGING MIDDLEWARE - MUST SEE THIS FOR EVERY REQUEST
+app.use((req, res, next) => {
+  console.log("========================================");
+  console.log(`REQUEST: ${req.method} ${req.url}`);
+  console.log("BODY:", req.body);
+  console.log("========================================");
+  next();
+});
+
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/posts", postRoutes);
+app.use("/api/comments", commentRoutes);
+app.use("/api/likes", likeRoutes);
 
 app.listen(8800, async () => {
-  console.log("API working!");
+  console.log("========================================");
+  console.log("🚀 SERVER IS RUNNING ON http://localhost:8800");
+  console.log("========================================");
 
   try {
-    // Query system tables to get a list of all user-created tables
-    const result = await db.query("SELECT name FROM sys.tables");
-
-    console.log("Tables found in database:");
-    console.table(result.recordset);
-
-    // For each table, get all columns using parameterized query
-    for (const table of result.recordset) {
-      const tableName = table.name;
-      const columns = await db.query(
-        `SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE 
-         FROM INFORMATION_SCHEMA.COLUMNS 
-         WHERE TABLE_NAME = ?`,
-        [tableName],
-      );
-
-      console.log(`\nColumns in table '${tableName}':`);
-      console.table(columns.recordset);
-    }
+    await db.pool;
+    console.log("✅ Database connected successfully!");
   } catch (err) {
-    console.error("Query failed:", err);
+    console.error("❌ Database connection failed:", err);
   }
 });
