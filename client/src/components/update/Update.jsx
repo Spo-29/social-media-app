@@ -58,7 +58,7 @@ const Update = ({ setOpenUpdate, user }) => {
     mutation.mutate({ ...texts, coverPic: coverUrl, profilePic: profileUrl });
     setOpenUpdate(false);
     setCover(null);
-    setProfile(null);
+    setProfile(null);}
 
   return (
     <div className="update">
@@ -152,4 +152,4 @@ const Update = ({ setOpenUpdate, user }) => {
   );
 };
 
-export default Update;
+export default Update; 
