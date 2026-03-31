@@ -28,9 +28,13 @@ const Login = () => {
 
     try {
       await login(inputs);
-      navigate("/");
+      navigate("/home");
     } catch (err) {
-      setErr(err.response.data);
+      const errorMessage =
+        err?.response?.data ||
+        err?.message ||
+        "Login failed. Please try again.";
+      setErr(errorMessage);
     }
   };
 
