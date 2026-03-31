@@ -3,7 +3,6 @@ import Register from "./pages/register/Register";
 import {
   createBrowserRouter,
   RouterProvider,
-  Route,
   Outlet,
   Navigate,
 } from "react-router-dom";
@@ -16,30 +15,43 @@ import "./style.scss";
 import { useContext } from "react";
 import { DarkModeContext } from "./context/darkModeContext";
 import { AuthContext } from "./context/authContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 function App() {
-  const {currentUser} = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
 
   const { darkMode } = useContext(DarkModeContext);
 
   const Layout = () => {
     return (
-      <div className={`theme-${darkMode ? "dark" : "light"}`}>
-        <Navbar />
-        <div style={{ display: "flex" }}>
-          <LeftBar />
-          <div style={{ flex: 6 }}>
-            <Outlet />
+      <QueryClientProvider client={queryClient}>
+        <div className={`theme-${darkMode ? "dark" : "light"}`}>
+          <Navbar />
+          <div style={{ display: "flex" }}>
+            <LeftBar />
+            <div style={{ flex: 6 }}>
+              <Outlet />
+            </div>
+            <RightBar />
           </div>
-          <RightBar />
         </div>
-      </div>
+      </QueryClientProvider>
     );
   };
 
   const ProtectedRoute = ({ children }) => {
     if (!currentUser) {
-      return <Navigate to="/login" />;
+      return <Navigate to="/" />;
+    }
+
+    return children;
+  };
+
+  const PublicOnlyRoute = ({ children }) => {
+    if (currentUser) {
+      return <Navigate to="/home" />;
     }
 
     return children;
@@ -47,7 +59,6 @@ function App() {
 
   const router = createBrowserRouter([
     {
-      path: "/",
       element: (
         <ProtectedRoute>
           <Layout />
@@ -55,7 +66,7 @@ function App() {
       ),
       children: [
         {
-          path: "/",
+          path: "/home",
           element: <Home />,
         },
         {
@@ -65,12 +76,24 @@ function App() {
       ],
     },
     {
+      path: "/",
+      element: currentUser ? <Navigate to="/home" /> : <Navigate to="/register" />,
+    },
+    {
       path: "/login",
-      element: <Login />,
+      element: (
+        <PublicOnlyRoute>
+          <Login />
+        </PublicOnlyRoute>
+      ),
     },
     {
       path: "/register",
-      element: <Register />,
+      element: (
+        <PublicOnlyRoute>
+          <Register />
+        </PublicOnlyRoute>
+      ),
     },
   ]);
 
