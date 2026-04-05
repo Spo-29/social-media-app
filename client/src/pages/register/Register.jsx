@@ -76,15 +76,15 @@ const Register = () => {
               onChange={handleChange}
             />
             <input
-              type="password"
-              placeholder="Password"
-              name="password"
-              onChange={handleChange}
-            />
-            <input
               type="text"
               placeholder="Name"
               name="name"
+              onChange={handleChange}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              name="password"
               onChange={handleChange}
             />
             {err && err}
