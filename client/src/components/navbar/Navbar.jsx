@@ -17,6 +17,16 @@ const Navbar = () => {
   const { toggle, darkMode } = useContext(DarkModeContext);
   const { currentUser, logout } = useContext(AuthContext);
 
+  const getImageSrc = (value) => {
+    if (!value) {
+      return "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2";
+    }
+    if (value.startsWith("http://") || value.startsWith("https://")) {
+      return value;
+    }
+    return "/upload/" + value;
+  };
+
   const handleLogout = () => {
     logout();
     navigate("/register");
@@ -44,13 +54,12 @@ const Navbar = () => {
         <PersonOutlinedIcon />
         <EmailOutlinedIcon />
         <NotificationsOutlinedIcon />
-        <div className="user">
-          <img
-            src={currentUser.profilePic}
-            alt=""
-          />
-          <span>{currentUser.name}</span>
-        </div>
+        <Link to={`/profile/${currentUser.id}`} style={{ textDecoration: "none", color: "inherit" }}>
+          <div className="user">
+            <img src={getImageSrc(currentUser.profilePic)} alt="" />
+            <span>{currentUser.name}</span>
+          </div>
+        </Link>
         <button onClick={handleLogout}>Logout</button>
       </div>
     </div>
