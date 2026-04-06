@@ -8,23 +8,38 @@ import PlaceIcon from "@mui/icons-material/Place";
 import LanguageIcon from "@mui/icons-material/Language";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import Posts from "../../components/posts/Posts"
+import Posts from "../../components/posts/Posts";
+import { useContext } from "react";
+import { AuthContext } from "../../context/authContext";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
+  const { currentUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   return (
     <div className="profile">
       <div className="images">
         <img
-          src="https://images.pexels.com/photos/13440765/pexels-photo-13440765.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+          src={
+            currentUser.coverPic
+              ? "/upload/" + currentUser.coverPic
+              : "https://images.pexels.com/photos/13440765/pexels-photo-13440765.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+          }
           alt=""
           className="cover"
         />
         <img
-          src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+          src={
+            currentUser.profilePic
+              ? "/upload/" + currentUser.profilePic
+              : "https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+          }
           alt=""
           className="profilePic"
         />
       </div>
+
       <div className="profileContainer">
         <div className="uInfo">
           <div className="left">
@@ -44,26 +59,31 @@ const Profile = () => {
               <PinterestIcon fontSize="large" />
             </a>
           </div>
+
           <div className="center">
-            <span>Jane Doe</span>
+            <span>{currentUser.name}</span>
             <div className="info">
               <div className="item">
                 <PlaceIcon />
-                <span>USA</span>
+                <span>{currentUser.city || "No city"}</span>
               </div>
               <div className="item">
                 <LanguageIcon />
-                <span>lama.dev</span>
+                <span>{currentUser.website || "No website"}</span>
               </div>
             </div>
-            <button>follow</button>
+            <button onClick={() => navigate("/edit-profile")}>
+              Edit Profile
+            </button>
           </div>
+
           <div className="right">
             <EmailOutlinedIcon />
             <MoreVertIcon />
           </div>
         </div>
-      <Posts/>
+
+        <Posts />
       </div>
     </div>
   );

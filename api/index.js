@@ -2,43 +2,55 @@ import express from "express";
 import { db } from "./connect.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import multer from "multer";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import postRoutes from "./routes/posts.js";
 import commentRoutes from "./routes/comments.js";
 import likeRoutes from "./routes/likes.js";
-import multer from "multer";
-
+console.log("INDEX FILE START");
 const app = express();
 
-//middlewares
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Credentials", true);
   next();
 });
+
 app.use(express.json());
+
 app.use(
   cors({
-    origin: "http://localhost:3000",
-  }),
+    origin: "http://localhost:3001",
+    credentials: true,
+  })
 );
+
 app.use(cookieParser());
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "../client/public/upload");
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + file.originalname);
+    cb(null, Date.now() + "_" + file.originalname);
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
+
 app.post("/api/upload", upload.single("file"), (req, res) => {
-  const file = req.file;
-  res.status(200).json(file.filename);
+  try {
+    if (!req.file) {
+      return res.status(400).json("No file uploaded");
+    }
+
+    return res.status(200).json(req.file.filename);
+  } catch (err) {
+    console.error("UPLOAD ERROR:", err);
+    return res.status(500).json("File upload failed");
+  }
 });
 
-// LOGGING MIDDLEWARE - MUST SEE THIS FOR EVERY REQUEST
 app.use((req, res, next) => {
   console.log("========================================");
   console.log(`REQUEST: ${req.method} ${req.url}`);

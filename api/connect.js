@@ -1,16 +1,15 @@
-import sql from "mssql/msnodesqlv8.js"; // distinct import for Windows Auth
+import sql from "mssql/msnodesqlv8.js";
 
 const config = {
-  server: "LAPTOP-JLC52F7F\\SQLEXPRESS", // Double backslash \\ is required in JS strings
+  server: ".\\SQLEXPRESS",
   database: "db_project",
-  driver: "msnodesqlv8", // Required for Integrated Security
+  driver: "msnodesqlv8",
   options: {
-    trustedConnection: true, // This maps to "Integrated Security=True"
-    trustServerCertificate: true, // This maps to "TrustServerCertificate=True"
+    trustedConnection: true,
+    trustServerCertificate: true,
   },
 };
 
-// Create and export the connection pool
 const poolPromise = new sql.ConnectionPool(config)
   .connect()
   .then((pool) => {
@@ -18,27 +17,25 @@ const poolPromise = new sql.ConnectionPool(config)
     return pool;
   })
   .catch((err) => {
-    console.error("Database Connection Failed! Details: ", err);
+    console.error("Database Connection Failed! Details:", err);
+    throw err;
   });
 
 export const db = {
-  query: async (queryString, values) => {
+  query: async (queryString, values = []) => {
     const pool = await poolPromise;
     const request = pool.request();
 
-    // If values array is provided, convert ? placeholders to named parameters
-    if (values && Array.isArray(values)) {
-      let paramIndex = 0;
-      const convertedQuery = queryString.replace(/\?/g, () => {
-        const paramName = `param${paramIndex}`;
-        request.input(paramName, values[paramIndex]);
-        paramIndex++;
-        return `@${paramName}`;
-      });
-      return request.query(convertedQuery);
-    }
-
-    return request.query(queryString);
+    let paramIndex = 0;
+    const convertedQuery = queryString.replace(/\?/g, () => {
+      const paramName = `param${paramIndex}`;
+      request.input(paramName, values[paramIndex]);
+      paramIndex++;
+      return `@${paramName}`;
+    });
+console.log("Running query:", convertedQuery);
+console.log("Values:", values);
+    return await request.query(convertedQuery);
   },
   pool: poolPromise,
 };

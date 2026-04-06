@@ -20,7 +20,10 @@ const Post = ({ post }) => {
       <div className="container">
         <div className="user">
           <div className="userInfo">
-            <img src={post.profilePic} alt="" />
+            <img
+             src={post.profilePic ? "/upload/" + post.profilePic : "https://via.placeholder.com/40"}
+                      alt=""
+                            />
             <div className="details">
               <Link
                 to={`/profile/${post.userId}`}
@@ -35,7 +38,7 @@ const Post = ({ post }) => {
         </div>
         <div className="content">
           <p>{post.desc}</p>
-          <img src={"./upload/" + post.img} alt="" />
+          {post.img && <img src={"/upload/" + post.img} alt="" />}
         </div>
         <div className="info">
           <div className="item">
