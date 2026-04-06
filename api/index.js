@@ -1,67 +1,43 @@
 import express from "express";
-import { db } from "./connect.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.js";
-import userRoutes from "./routes/users.js";
-import postRoutes from "./routes/posts.js";
-import commentRoutes from "./routes/comments.js";
-import likeRoutes from "./routes/likes.js";
-import multer from "multer";
+import storiesRoutes from "./routes/stories.js";
 
 const app = express();
 
-//middlewares
+// Middlewares
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Credentials", true);
   next();
 });
+
 app.use(express.json());
+
 app.use(
   cors({
-    origin: "http://localhost:3000",
-  }),
+    origin: "http://localhost:3000", // Matches the port in your screenshot
+  })
 );
+
 app.use(cookieParser());
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "../client/public/upload");
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + file.originalname);
-  },
-});
 
-const upload = multer({ storage: storage });
-app.post("/api/upload", upload.single("file"), (req, res) => {
-  const file = req.file;
-  res.status(200).json(file.filename);
-});
-
-// LOGGING MIDDLEWARE - MUST SEE THIS FOR EVERY REQUEST
-app.use((req, res, next) => {
-  console.log("========================================");
-  console.log(`REQUEST: ${req.method} ${req.url}`);
-  console.log("BODY:", req.body);
-  console.log("========================================");
-  next();
-});
-
+// Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/posts", postRoutes);
-app.use("/api/comments", commentRoutes);
-app.use("/api/likes", likeRoutes);
+app.use("/api/stories", storiesRoutes);
 
-app.listen(8800, async () => {
-  console.log("========================================");
-  console.log("🚀 SERVER IS RUNNING ON http://localhost:8800");
-  console.log("========================================");
+// Test routes
+app.get("/", (req, res) => {
+  res.send("API is working 🚀");
+});
 
-  try {
-    await db.pool;
-    console.log("✅ Database connected successfully!");
-  } catch (err) {
-    console.error("❌ Database connection failed:", err);
-  }
+app.get("/api/test", (req, res) => {
+  res.json({ message: "Hello from backend!" });
+});
+
+// Server listener
+const PORT = 8800;
+app.listen(PORT, () => {
+  console.log(`Server is officially listening on port ${PORT}...`);
+  console.log("Press Ctrl+C to stop the server.");
 });

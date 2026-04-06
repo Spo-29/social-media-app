@@ -59,6 +59,8 @@ CREATE TABLE stories (
     id INT IDENTITY(1,1) NOT NULL,
     img VARCHAR(200) NOT NULL,
     userId INT NOT NULL,
+    createdAt DATETIME DEFAULT GETDATE(),
+    expireAt DATETIME,
     CONSTRAINT PK_stories PRIMARY KEY (id),
     CONSTRAINT FK_stories_users FOREIGN KEY (userId)
         REFERENCES users(id)

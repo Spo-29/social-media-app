@@ -1,7 +1,7 @@
 import sql from "mssql/msnodesqlv8.js"; // distinct import for Windows Auth
 
 const config = {
-  server: "LAPTOP-JLC52F7F\\SQLEXPRESS", // Double backslash \\ is required in JS strings
+  server: "MMD5CG9456TSR\\SQLEXPRESS", // Double backslash \\ is required in JS strings
   database: "db_project",
   driver: "msnodesqlv8", // Required for Integrated Security
   options: {
