@@ -56,11 +56,36 @@
         }
       }
 
-      .date{
-        flex:1;
+      .actions {
+        flex: 1;
         align-self: center;
-        color: gray;
-        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+
+        .date {
+          color: gray;
+          font-size: 12px;
+          white-space: nowrap;
+        }
+
+        .commentDeleteBtn {
+          border: none;
+          background: transparent;
+          color: themed("textColorSoft");
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 4px;
+          border-radius: 50%;
+
+          &:hover {
+            color: #f0544f;
+            background-color: rgba(240, 84, 79, 0.1);
+          }
+        }
       }
     }
   }

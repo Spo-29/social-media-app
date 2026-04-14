@@ -3,7 +3,7 @@ import PlaceIcon from "@mui/icons-material/Place";
 import LanguageIcon from "@mui/icons-material/Language";
 import Posts from "../../components/posts/Posts";
 import { useLocation, Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
@@ -12,6 +12,7 @@ const Profile = () => {
   const { currentUser } = useContext(AuthContext);
   const location = useLocation();
   const userId = location.pathname.split("/")[2] || currentUser?.id;
+  const queryClient = useQueryClient();
 
   const { isLoading, error, data } = useQuery({
     queryKey: ["user", userId],
@@ -20,11 +21,54 @@ const Profile = () => {
       makeRequest.get("/users/find/" + userId).then((res) => {
         return res.data;
       }),
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "stale",
   });
 
+  // Calculate isOwnProfile BEFORE using it in other queries
   const profileUser = data || {};
   const isOwnProfile =
     Number(currentUser?.id) === Number(profileUser?.id ?? userId);
+
+  const { data: followStatus } = useQuery({
+    queryKey: ["followStatus", userId],
+    enabled: Boolean(userId) && !isOwnProfile,
+    queryFn: () =>
+      makeRequest
+        .get(`/relationships/check/${userId}`)
+        .then((res) => res.data),
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+  });
+
+  // Follow mutation
+  const followMutation = useMutation({
+    mutationFn: () =>
+      makeRequest.post(`/relationships/follow`, {
+        userId: profileUser.id,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["followStatus", userId] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["followings"] });
+      queryClient.invalidateQueries({ queryKey: ["followers"] });
+    },
+  });
+
+  // Unfollow mutation
+  const unfollowMutation = useMutation({
+    mutationFn: () =>
+      makeRequest.delete(`/relationships/unfollow`, {
+        data: { userId: profileUser.id },
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["followStatus", userId] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["followings"] });
+      queryClient.invalidateQueries({ queryKey: ["followers"] });
+    },
+  });
 
   const getImageSrc = (value, fallback) => {
     if (!value) return fallback;
@@ -48,6 +92,16 @@ const Profile = () => {
       ? profileUser.website
       : `https://${profileUser.website}`
     : null;
+
+  const handleFollowClick = () => {
+    if (!profileUser?.id) return;
+
+    if (followStatus) {
+      unfollowMutation.mutate();
+    } else {
+      followMutation.mutate();
+    }
+  };
 
   return (
     <div className="profile">
@@ -80,7 +134,13 @@ const Profile = () => {
                 <button>Edit Profile</button>
               </Link>
             ) : (
-              <button>follow</button>
+              <button
+                className={followStatus ? "unfollowBtn" : "followBtn"}
+                onClick={handleFollowClick}
+                disabled={followMutation.isPending || unfollowMutation.isPending}
+              >
+                {followStatus ? "Unfriend" : "Add friend"}
+              </button>
             )}
           </div>
         </div>

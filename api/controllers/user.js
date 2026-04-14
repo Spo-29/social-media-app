@@ -94,3 +94,27 @@ export const updateUser = (req, res) => {
     }
   });
 };
+
+export const searchUsers = async (req, res) => {
+  const query = req.query.q;
+
+  if (!query || query.trim().length === 0) {
+    return res.status(200).json([]);
+  }
+
+  try {
+    const searchQuery = `
+      SELECT id, username, name, profilePic, city
+      FROM users
+      WHERE username LIKE ? OR name LIKE ?
+      ORDER BY name ASC
+    `;
+
+    const searchTerm = `%${query}%`;
+    const data = await db.query(searchQuery, [searchTerm, searchTerm]);
+
+    return res.status(200).json(data.recordset);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+};

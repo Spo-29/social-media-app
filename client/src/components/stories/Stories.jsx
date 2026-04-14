@@ -20,6 +20,9 @@ const Stories = () => {
       makeRequest.get("/stories").then((res) => {
         return res.data;
       }),
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "stale",
   });
 
   const getImageSrc = (value) => {

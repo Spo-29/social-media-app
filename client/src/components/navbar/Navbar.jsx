@@ -8,7 +8,7 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { Link, useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { AuthContext } from "../../context/authContext";
 
@@ -16,6 +16,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { toggle, darkMode } = useContext(DarkModeContext);
   const { currentUser, logout } = useContext(AuthContext);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const getImageSrc = (value) => {
     if (!value) {
@@ -32,13 +33,22 @@ const Navbar = () => {
     navigate("/register");
   };
 
+  const handleSearch = (e) => {
+    if (e.key === "Enter" && searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery("");
+    }
+  };
+
   return (
     <div className="navbar">
       <div className="left">
         <Link to="/home" style={{ textDecoration: "none" }}>
-          <span>lamasocial</span>
+          <span>Hello World</span>
         </Link>
-        <HomeOutlinedIcon />
+        <Link to="/home" style={{ textDecoration: "none", color: "inherit", display: "flex" }}>
+          <HomeOutlinedIcon />
+        </Link>
         {darkMode ? (
           <WbSunnyOutlinedIcon onClick={toggle} />
         ) : (
@@ -47,7 +57,13 @@ const Navbar = () => {
         <GridViewOutlinedIcon />
         <div className="search">
           <SearchOutlinedIcon />
-          <input type="text" placeholder="Search..." />
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyPress={handleSearch}
+          />
         </div>
       </div>
       <div className="right">

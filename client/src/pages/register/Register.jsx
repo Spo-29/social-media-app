@@ -49,7 +49,7 @@ const Register = () => {
     <div className="register">
       <div className="card">
         <div className="left">
-          <h1>Lama Social.</h1>
+          <h1>Hello World</h1>
           <p>
             Join our community! Create your free account and start sharing your
             moments with friends, discover new content, and connect with people

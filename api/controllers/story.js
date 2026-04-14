@@ -12,8 +12,13 @@ export const getStories = async (req, res) => {
       SELECT s.id, s.img, s.userId, u.name
       FROM stories AS s
       JOIN users AS u ON (u.id = s.userId)
-      LEFT JOIN relationships AS r ON (s.userId = r.followedUserId)
-      WHERE r.followerUserId = ? OR s.userId = ?
+      WHERE s.userId = ?
+         OR EXISTS (
+           SELECT 1
+           FROM relationships AS r
+           WHERE r.followerUserId = ?
+             AND r.followedUserId = s.userId
+         )
       ORDER BY s.id DESC
     `;
 

@@ -4,6 +4,7 @@ import { AuthContext } from "../../context/authContext";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import moment from "moment";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 
 const Comments = ({ postId }) => {
   const { currentUser } = useContext(AuthContext);
@@ -26,6 +27,7 @@ const Comments = ({ postId }) => {
       makeRequest.get("/comments?postId=" + postId).then((res) => {
         return res.data;
       }),
+    staleTime: 0,
   });
 
   const mutation = useMutation({
@@ -38,12 +40,24 @@ const Comments = ({ postId }) => {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (commentId) => makeRequest.delete(`/comments/${commentId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["comments", postId] });
+    },
+  });
+
   const handleClick = async (e) => {
     e.preventDefault();
     const cleanedDesc = desc.trim();
     if (!cleanedDesc) return;
 
     mutation.mutate({ desc: cleanedDesc, postId });
+  };
+
+  const handleDeleteComment = (commentId) => {
+    if (deleteMutation.isPending) return;
+    deleteMutation.mutate(commentId);
   };
 
   const comments = Array.isArray(data) ? data : [];
@@ -69,7 +83,18 @@ const Comments = ({ postId }) => {
               <span>{comment.name}</span>
               <p>{comment.desc}</p>
             </div>
-            <span className="date">{moment(comment.createdAt).fromNow()}</span>
+            <div className="actions">
+              <span className="date">{moment(comment.createdAt).fromNow()}</span>
+              {Number(comment.userId) === Number(currentUser.id) && (
+                <button
+                  className="commentDeleteBtn"
+                  onClick={() => handleDeleteComment(comment.id)}
+                  title="Delete comment"
+                >
+                  <DeleteOutlineOutlinedIcon />
+                </button>
+              )}
+            </div>
           </div>
         ))}
     </div>

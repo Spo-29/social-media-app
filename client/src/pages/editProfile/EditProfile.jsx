@@ -30,8 +30,13 @@ const EditProfile = () => {
     mutationFn: (payload) => makeRequest.put("/users", payload),
     onSuccess: (res) => {
       updateCurrentUser(res.data);
-      queryClient.invalidateQueries({ queryKey: ["user", currentUser.id] });
+      // Invalidate all queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ["user"] });
       queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["activities"] });
+      queryClient.invalidateQueries({ queryKey: ["stories"] });
+      queryClient.invalidateQueries({ queryKey: ["followings"] });
+      queryClient.invalidateQueries({ queryKey: ["followers"] });
       navigate("/profile/" + currentUser.id);
     },
   });

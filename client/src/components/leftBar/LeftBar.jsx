@@ -47,10 +47,12 @@ const LeftBar = () => {
               <span>Edit Profile</span>
             </div>
           </Link>
-          <div className="item">
-            <img src={Friends} alt="" />
-            <span>Friends</span>
-          </div>
+          <Link to="/friends" style={{ textDecoration: "none", color: "inherit" }}>
+            <div className="item">
+              <img src={Friends} alt="" />
+              <span>Friends</span>
+            </div>
+          </Link>
           <div className="item">
             <img src={Groups} alt="" />
             <span>Groups</span>
