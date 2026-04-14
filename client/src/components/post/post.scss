@@ -17,6 +17,49 @@
         align-items: center;
         justify-content: space-between;
 
+        .postOwnerActions {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          .postEditBtn {
+            border: none;
+            background-color: #5271ff;
+            color: white;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+
+            &:hover {
+              background-color: #3f5eea;
+            }
+          }
+        }
+
+        .postDeleteBtn {
+          border: none;
+          background: transparent;
+          color: themed("textColorSoft");
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 6px;
+          border-radius: 50%;
+
+          &:hover {
+            color: #f0544f;
+            background-color: rgba(240, 84, 79, 0.1);
+          }
+
+          &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+          }
+        }
+
         .userInfo {
           display: flex;
           gap: 20px;
@@ -45,6 +88,54 @@
 
       .content {
         margin: 20px 0px;
+
+        .editPostBox {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+
+          textarea {
+            width: 100%;
+            resize: vertical;
+            min-height: 70px;
+            border: 1px solid themed("border");
+            border-radius: 8px;
+            padding: 10px;
+            background-color: transparent;
+            color: themed("textColor");
+            font-family: inherit;
+          }
+
+          .editActions {
+            display: flex;
+            gap: 8px;
+
+            .saveEditBtn,
+            .cancelEditBtn {
+              border: none;
+              padding: 6px 12px;
+              border-radius: 6px;
+              cursor: pointer;
+              font-size: 12px;
+              font-weight: 600;
+            }
+
+            .saveEditBtn {
+              background-color: #2fbf71;
+              color: white;
+
+              &:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+              }
+            }
+
+            .cancelEditBtn {
+              background-color: #f0f2f5;
+              color: #333;
+            }
+          }
+        }
 
         img {
           width: 100%;

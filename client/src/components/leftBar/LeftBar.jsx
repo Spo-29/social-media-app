@@ -14,10 +14,21 @@ import Courses from "../../assets/12.png";
 import Fund from "../../assets/13.png";
 import { AuthContext } from "../../context/authContext";
 import { useContext } from "react";
+import { Link } from "react-router-dom";
 
 const LeftBar = () => {
 
   const { currentUser } = useContext(AuthContext);
+
+  const getImageSrc = (value) => {
+    if (!value) {
+      return "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2";
+    }
+    if (value.startsWith("http://") || value.startsWith("https://")) {
+      return value;
+    }
+    return "/upload/" + value;
+  };
 
   return (
     <div className="leftBar">
@@ -25,15 +36,23 @@ const LeftBar = () => {
         <div className="menu">
           <div className="user">
             <img
-              src={currentUser.profilePic}
+              src={getImageSrc(currentUser.profilePic)}
               alt=""
             />
             <span>{currentUser.name}</span>
           </div>
-          <div className="item">
-            <img src={Friends} alt="" />
-            <span>Friends</span>
-          </div>
+          <Link to="/profile/edit" style={{ textDecoration: "none", color: "inherit" }}>
+            <div className="item">
+              <img src={Friends} alt="" />
+              <span>Edit Profile</span>
+            </div>
+          </Link>
+          <Link to="/friends" style={{ textDecoration: "none", color: "inherit" }}>
+            <div className="item">
+              <img src={Friends} alt="" />
+              <span>Friends</span>
+            </div>
+          </Link>
           <div className="item">
             <img src={Groups} alt="" />
             <span>Groups</span>

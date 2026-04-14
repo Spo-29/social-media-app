@@ -1,7 +1,5 @@
 import "./share.scss";
 import Image from "../../assets/img.png";
-import Map from "../../assets/map.png";
-import Friend from "../../assets/friend.png";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../context/authContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -22,6 +20,16 @@ const Share = () => {
   };
 
   const { currentUser } = useContext(AuthContext);
+
+  const getImageSrc = (value) => {
+    if (!value) {
+      return "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2";
+    }
+    if (value.startsWith("http://") || value.startsWith("https://")) {
+      return value;
+    }
+    return "/upload/" + value;
+  };
 
   const queryClient = useQueryClient();
 
@@ -49,7 +57,7 @@ const Share = () => {
       <div className="container">
         <div className="top">
           <div className="left">
-            <img src={"/upload/" + currentUser.profilePic} alt="" />
+            <img src={getImageSrc(currentUser.profilePic)} alt="" />
             <input
               type="text"
               placeholder={`What's on your mind ${currentUser.name}?`}
@@ -78,14 +86,6 @@ const Share = () => {
                 <span>Add Image</span>
               </div>
             </label>
-            <div className="item">
-              <img src={Map} alt="" />
-              <span>Add Place</span>
-            </div>
-            <div className="item">
-              <img src={Friend} alt="" />
-              <span>Tag Friends</span>
-            </div>
           </div>
           <div className="right">
             <button onClick={handleClick}>Share</button>

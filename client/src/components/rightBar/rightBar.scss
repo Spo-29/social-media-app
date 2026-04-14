@@ -46,6 +46,7 @@
             align-items: center;
             gap: 20px;
             position: relative;
+            flex: 1;
 
             img {
               width: 40px;
@@ -66,6 +67,7 @@
 
             p {
               color: themed("textColorSoft");
+              margin: 0;
             }
 
             span {
@@ -94,6 +96,27 @@
               }
             }
           }
+
+          .timestamp {
+            font-size: 12px;
+            color: gray;
+            white-space: nowrap;
+            margin-left: 10px;
+          }
+        }
+
+        .loading {
+          text-align: center;
+          padding: 20px;
+          color: gray;
+          font-size: 14px;
+        }
+
+        .noActivities {
+          text-align: center;
+          padding: 20px;
+          color: gray;
+          font-size: 14px;
         }
       }
     }

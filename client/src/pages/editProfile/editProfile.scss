@@ -1,0 +1,88 @@
+@import "../../style.scss";
+
+.editProfile {
+  @include themify($themes) {
+    min-height: calc(100vh - 70px);
+    background-color: themed("bgSoft");
+    display: flex;
+    justify-content: center;
+    padding: 30px 15px;
+
+    .card {
+      width: 100%;
+      max-width: 700px;
+      background-color: themed("bg");
+      color: themed("textColor");
+      border-radius: 20px;
+      padding: 25px;
+      -webkit-box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
+      -moz-box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
+      box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
+
+      h1 {
+        margin: 0 0 20px;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        label {
+          font-size: 14px;
+          font-weight: 600;
+          color: themed("textColorSoft");
+        }
+
+        input[type="text"],
+        input[type="file"] {
+          border: 1px solid themed("border");
+          background-color: transparent;
+          color: themed("textColor");
+          padding: 10px;
+          border-radius: 6px;
+        }
+
+        .preview {
+          width: 120px;
+          height: 120px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 1px solid themed("border");
+        }
+
+        .preview.cover {
+          width: 100%;
+          height: 180px;
+          border-radius: 12px;
+        }
+
+        .actions {
+          margin-top: 8px;
+          display: flex;
+          gap: 10px;
+        }
+
+        button {
+          margin-top: 8px;
+          border: none;
+          background-color: #5271ff;
+          color: white;
+          padding: 10px 18px;
+          border-radius: 6px;
+          cursor: pointer;
+          width: fit-content;
+        }
+
+        .backBtn {
+          background-color: #6d6d6d;
+        }
+
+        button:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}
